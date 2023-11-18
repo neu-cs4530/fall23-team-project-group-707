@@ -176,6 +176,22 @@ export default class TownGameScene extends Phaser.Scene {
     return undefined;
   }
 
+  getNewDanceMove() {
+    if (this._cursors.find(keySet => keySet.one?.isDown)) {
+      return 'danceMoveOne';
+    }
+    if (this._cursors.find(keySet => keySet.two?.isDown)) {
+      return 'danceMoveTwo';
+    }
+    if (this._cursors.find(keySet => keySet.three?.isDown)) {
+      return 'danceMoveThree';
+    }
+    if (this._cursors.find(keySet => keySet.four?.isDown)) {
+      return 'danceMoveFour';
+    }
+    return undefined;
+  }
+
   moveOurPlayerTo(destination: Partial<PlayerLocation>) {
     const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
     if (!gameObjects) {
@@ -230,6 +246,38 @@ export default class TownGameScene extends Phaser.Scene {
         case 'back':
           body.setVelocityY(-MOVEMENT_SPEED);
           gameObjects.sprite.anims.play('misa-back-walk', true);
+          break;
+        default:
+          // Not moving
+          gameObjects.sprite.anims.stop();
+          // If we were moving, pick and idle frame to use
+          if (prevVelocity.x < 0) {
+            gameObjects.sprite.setTexture('atlas', 'misa-left');
+          } else if (prevVelocity.x > 0) {
+            gameObjects.sprite.setTexture('atlas', 'misa-right');
+          } else if (prevVelocity.y < 0) {
+            gameObjects.sprite.setTexture('atlas', 'misa-back');
+          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front');
+          break;
+      }
+
+      const gameMove = this.getNewDanceMove();
+      switch (gameMove) {
+        case 'danceMoveOne':
+          console.log('dance 1')
+          gameObjects.sprite.anims.play('dance-move-one', true);
+          break;
+        case 'danceMoveTwo':
+          console.log('dance 2');
+          gameObjects.sprite.anims.play('dance-move-two', true);
+          break;
+        case 'danceMoveThree':
+          console.log('dance 3');
+          gameObjects.sprite.anims.play('dance-move-three', true);
+          break;
+        case 'danceMoveFour':
+          console.log('dance 4');
+          gameObjects.sprite.anims.play('dance-move-four', true);
           break;
         default:
           // Not moving
@@ -395,6 +443,10 @@ export default class TownGameScene extends Phaser.Scene {
           down: Phaser.Input.Keyboard.KeyCodes.S,
           left: Phaser.Input.Keyboard.KeyCodes.A,
           right: Phaser.Input.Keyboard.KeyCodes.D,
+          one: Phaser.Input.Keyboard.KeyCodes.ONE,
+          two: Phaser.Input.Keyboard.KeyCodes.TWO,
+          three: Phaser.Input.Keyboard.KeyCodes.THREE,
+          four: Phaser.Input.Keyboard.KeyCodes.FOUR,
         },
         false,
       ) as Phaser.Types.Input.Keyboard.CursorKeys,
@@ -406,6 +458,10 @@ export default class TownGameScene extends Phaser.Scene {
           down: Phaser.Input.Keyboard.KeyCodes.J,
           left: Phaser.Input.Keyboard.KeyCodes.K,
           right: Phaser.Input.Keyboard.KeyCodes.L,
+          one: Phaser.Input.Keyboard.KeyCodes.ONE,
+          two: Phaser.Input.Keyboard.KeyCodes.TWO,
+          three: Phaser.Input.Keyboard.KeyCodes.THREE,
+          four: Phaser.Input.Keyboard.KeyCodes.FOUR,
         },
         false,
       ) as Phaser.Types.Input.Keyboard.CursorKeys,
