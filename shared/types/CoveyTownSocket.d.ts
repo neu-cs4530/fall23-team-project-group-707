@@ -15,7 +15,7 @@ export type TownJoinResponse = {
   isPubliclyListed: boolean;
   /** Current state of interactables in this town */
   interactables: TypedInteractable[];
-}
+};
 
 export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'JukeboxArea';
 export interface Interactable {
@@ -27,7 +27,7 @@ export interface Interactable {
 export type TownSettingsUpdate = {
   friendlyName?: string;
   isPubliclyListed?: boolean;
-}
+};
 
 export type Direction = 'front' | 'back' | 'left' | 'right';
 
@@ -36,21 +36,28 @@ export interface Player {
   id: PlayerID;
   userName: string;
   location: PlayerLocation;
-};
+}
 
-export type XY = { x: number, y: number };
+export type XY = { x: number; y: number };
 
+// Represents a song, which has a name,
+// artist, and a unique videoID
 export type Song = {
   songName: string;
   artistName: string;
   videoId: string;
-}
+};
 
+// Represents a song in the queue, which has the song,
+// the number of upvotes, and the number of downvotes casted.
 export type SongQueueItem = {
   song: Song;
   numUpvotes: number;
   numDownvotes: number;
-}
+};
+
+// Represents the types of votes a user can make
+export type JukeboxVote = 'Upvote' | 'Downvote';
 
 export interface PlayerLocation {
   /* The CENTER x coordinate of this player's location */
@@ -61,7 +68,7 @@ export interface PlayerLocation {
   rotation: Direction;
   moving: boolean;
   interactableID?: string;
-};
+}
 export type ChatMessage = {
   author: string;
   sid: string;
@@ -71,13 +78,13 @@ export type ChatMessage = {
 
 export interface ConversationArea extends Interactable {
   topic?: string;
-};
+}
 export interface BoundingBox {
   x: number;
   y: number;
   width: number;
   height: number;
-};
+}
 
 export interface ViewingArea extends Interactable {
   video?: string;
@@ -85,9 +92,11 @@ export interface ViewingArea extends Interactable {
   elapsedTimeSec: number;
 }
 
+// Represents a Jukebox area interactable model
 export interface JukeboxArea extends Interactable {
   curSong?: Song;
   queue: SongQueueItem[];
+  videoPlayer: ViewingArea;
 }
 
 export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER';
@@ -96,7 +105,7 @@ export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER';
  */
 export interface GameState {
   status: GameStatus;
-} 
+}
 
 /**
  * Type for the state of a game that can be won
@@ -191,36 +200,68 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand;
-export interface ViewingAreaUpdateCommand  {
+export type InteractableCommand =
+  | ViewingAreaUpdateCommand
+  | JoinGameCommand
+  | GameMoveCommand<TicTacToeMove>
+  | LeaveGameCommand
+  | AddSongToQueueCommand
+  | VoteOnSongInQueueCommand;
+export interface ViewingAreaUpdateCommand {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
 }
+
 export interface JoinGameCommand {
   type: 'JoinGame';
 }
+
 export interface LeaveGameCommand {
   type: 'LeaveGame';
   gameID: GameInstanceID;
 }
+
 export interface GameMoveCommand<MoveType> {
   type: 'GameMove';
   gameID: GameInstanceID;
   move: MoveType;
 }
-export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
-  CommandType extends JoinGameCommand ? { gameID: string}:
-  CommandType extends ViewingAreaUpdateCommand ? undefined :
-  CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
-  CommandType extends LeaveGameCommand ? undefined :
-  never;
+
+// command to tell jukebox area backend to add the given song to queue
+export interface AddSongToQueueCommand {
+  type: 'AddSongToQueue';
+  song: Song;
+}
+
+// command to tell jukebox area backend to cast the given vote
+// on the provided song in queue
+export interface VoteOnSongInQueueCommand {
+  type: 'VoteOnSongInQueue';
+  song: Song;
+  vote: JukeboxVote;
+}
+
+export type InteractableCommandReturnType<CommandType extends InteractableCommand> =
+  CommandType extends JoinGameCommand
+    ? { gameID: string }
+    : CommandType extends ViewingAreaUpdateCommand
+    ? undefined
+    : CommandType extends GameMoveCommand<TicTacToeMove>
+    ? undefined
+    : CommandType extends LeaveGameCommand
+    ? undefined
+    : CommandType extends AddSongToQueueCommand
+    ? undefined
+    : CommandType extends VoteOnSongInQueueCommand
+    ? undefined
+    : never;
 
 export type InteractableCommandResponse<MessageType> = {
   commandID: CommandID;
   interactableID: InteractableID;
   error?: string;
   payload?: InteractableCommandResponseMap[MessageType];
-}
+};
 
 export interface ServerToClientEvents {
   playerMoved: (movedPlayer: Player) => void;

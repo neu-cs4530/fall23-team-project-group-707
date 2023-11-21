@@ -50,7 +50,6 @@ export default function TownMap(): JSX.Element {
     <div id='app-container'>
       <NewConversationModal />
       <TicTacToeAreaWrapper />
-
       <div id='map-container' />
       <div id='social-container'>
         <SocialSidebar />
