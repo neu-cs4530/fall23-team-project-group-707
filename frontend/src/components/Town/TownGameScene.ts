@@ -262,22 +262,24 @@ export default class TownGameScene extends Phaser.Scene {
       }
 
       const gameMove = this.getNewDanceMove();
+      // console.log('HERE');
+      // console.log(gameMove);
       switch (gameMove) {
         case 'danceMoveOne':
           console.log('dance 1')
-          gameObjects.sprite.anims.play('dance-move-one', true);
+          gameObjects.sprite.setTexture('atlas', 'misa-one-dance');
           break;
         case 'danceMoveTwo':
           console.log('dance 2');
-          gameObjects.sprite.anims.play('dance-move-two', true);
+          gameObjects.sprite.setTexture('atlas', 'misa-back');
           break;
         case 'danceMoveThree':
           console.log('dance 3');
-          gameObjects.sprite.anims.play('dance-move-three', true);
+          gameObjects.sprite.setTexture('atlas', 'misa-left');
           break;
         case 'danceMoveFour':
           console.log('dance 4');
-          gameObjects.sprite.anims.play('dance-move-four', true);
+          gameObjects.sprite.setTexture('atlas', 'misa-front');
           break;
         default:
           // Not moving
@@ -547,6 +549,17 @@ export default class TownGameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
+    // anims.create({
+    //   key: 'misa-one-dance',
+    //   frames: anims.generateFrameNames('atlas', {
+    //     prefix: 'misa-one-dance.',
+    //     start: 0,
+    //     end: 3,
+    //     zeroPad: 3,
+    //   }),
+    //   frameRate: 10,
+    //   repeat: -1,
+    // });
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
