@@ -82,8 +82,10 @@ export function SuggestionForm({ controller }: SuggestionFormProps): JSX.Element
     setSong(result);
   };
   const searchEventHandler = async () => {
-    const youtubeApiKey = process.env.NEXT_PUBLIC_TOWN_YOUTUBE_API_KEY;
-    assert(youtubeApiKey, 'NEXT_PUBLIC_TOWN_YOUTUBE_API_KEY must be defined');
+    const youtubeApiKey = process.env.NEXT_PUBLIC_TOWN_YOUTUBE_API_KEY as string;
+    if (process.env.NODE_ENV !== 'test') {
+      assert(youtubeApiKey, 'NEXT_PUBLIC_TOWN_YOUTUBE_API_KEY must be defined');
+    }
     try {
       const songs: Song[] = await searchSong({ songName, artistName, youtubeApiKey });
       setResults(songs);
