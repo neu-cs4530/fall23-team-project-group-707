@@ -171,7 +171,7 @@ describe('Suggestion form', () => {
       const queueButton = await screen.findByLabelText('queue');
       await userEvent.click(queueButton);
 
-      expect(jukeboxAreaQueueSongSpy).toBeCalled();
+      expect(jukeboxAreaQueueSongSpy).toBeCalledTimes(1);
       expect(jukeboxAreaQueueSongSpy).toBeCalledWith({
         songName: 'testing song',
         artistName: 'and queue',
