@@ -85,15 +85,6 @@ afterAll(() => {
 
 describe('Suggestion form', () => {
   describe('Search Button', () => {
-    it('should be able to accept click events', async () => {
-      // this test was mostly as a proof of concept and practice working with the testing library
-      render(<SuggestionForm controller={mockJukeboxAreaController}></SuggestionForm>);
-
-      const searchButton = screen.findByLabelText('search');
-
-      expect((await searchButton).textContent).toBe('Search');
-      expect((await searchButton).textContent).not.toBe('search');
-    });
     it('should call the Youtube Search API client with the current state when clicked', async () => {
       render(<SuggestionForm controller={mockJukeboxAreaController}></SuggestionForm>);
 
@@ -105,6 +96,24 @@ describe('Suggestion form', () => {
       expect(searchApiClientSpy).toBeCalledWith({
         artistName: '',
         songName: '',
+        youtubeApiKey: undefined,
+      });
+    });
+    it('should call the Youtube Search API client with updated states when clicked', async () => {
+      render(<SuggestionForm controller={mockJukeboxAreaController}></SuggestionForm>);
+
+      const searchButton = await screen.findByLabelText('search');
+      const songNameInput = await screen.findByLabelText('songName');
+      const artistInput = await screen.findByLabelText('artistName');
+
+      await userEvent.type(songNameInput, 'rich baby daddy');
+      await userEvent.type(artistInput, 'drake');
+      await userEvent.click(searchButton);
+
+      expect(searchApiClientSpy).toBeCalledTimes(1);
+      expect(searchApiClientSpy).toBeCalledWith({
+        artistName: 'drake',
+        songName: 'rich baby daddy',
         youtubeApiKey: undefined,
       });
     });
@@ -163,6 +172,11 @@ describe('Suggestion form', () => {
       await userEvent.click(queueButton);
 
       expect(jukeboxAreaQueueSongSpy).toBeCalled();
+      expect(jukeboxAreaQueueSongSpy).toBeCalledWith({
+        songName: 'testing song',
+        artistName: 'and queue',
+        videoId: 'and button',
+      });
     });
   });
 });
