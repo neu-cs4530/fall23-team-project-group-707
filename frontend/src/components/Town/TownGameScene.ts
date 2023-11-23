@@ -133,8 +133,8 @@ export default class TownGameScene extends Phaser.Scene {
     this.load.tilemapTiledJSON('map', this._resourcePathPrefix + '/assets/tilemaps/indoors.json');
     this.load.atlas(
       'atlas',
-      this._resourcePathPrefix + '/assets/atlas/atlas.png',
-      this._resourcePathPrefix + '/assets/atlas/atlas.json',
+      this._resourcePathPrefix + '/assets/atlas/atlas-new2.png',
+      this._resourcePathPrefix + '/assets/atlas/atlas-new2.json',
     );
   }
 
@@ -175,8 +175,19 @@ export default class TownGameScene extends Phaser.Scene {
     }
     return undefined;
   }
-
-  getNewDanceMove() {
+  getNewMove() {
+    if (this._cursors.find(keySet => keySet.left?.isDown)) {
+      return 'left';
+    }
+    if (this._cursors.find(keySet => keySet.right?.isDown)) {
+      return 'right';
+    }
+    if (this._cursors.find(keySet => keySet.down?.isDown)) {
+      return 'front';
+    }
+    if (this._cursors.find(keySet => keySet.up?.isDown)) {
+      return 'back';
+    }
     if (this._cursors.find(keySet => keySet.one?.isDown)) {
       return 'danceMoveOne';
     }
@@ -191,6 +202,22 @@ export default class TownGameScene extends Phaser.Scene {
     }
     return undefined;
   }
+
+  // getNewDanceMove() {
+  //   if (this._cursors.find(keySet => keySet.one?.isDown)) {
+  //     return 'danceMoveOne';
+  //   }
+  //   if (this._cursors.find(keySet => keySet.two?.isDown)) {
+  //     return 'danceMoveTwo';
+  //   }
+  //   if (this._cursors.find(keySet => keySet.three?.isDown)) {
+  //     return 'danceMoveThree';
+  //   }
+  //   if (this._cursors.find(keySet => keySet.four?.isDown)) {
+  //     return 'danceMoveFour';
+  //   }
+  //   return undefined;
+  // }
 
   moveOurPlayerTo(destination: Partial<PlayerLocation>) {
     const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
@@ -230,7 +257,27 @@ export default class TownGameScene extends Phaser.Scene {
       body.setVelocity(0);
 
       const primaryDirection = this.getNewMovementDirection();
-      switch (primaryDirection) {
+      const gameMove = this.getNewMove();
+      // console.log('HERE');
+      console.log(gameMove);
+      switch (gameMove) {
+        case 'danceMoveOne':
+          // console.log('dance 1')
+          gameObjects.sprite.anims.play('misa-one-dance', true);
+          // gameObjects.sprite.anims.play('misa-back-walk', true);
+          break;
+        case 'danceMoveTwo':
+          // console.log('dance 2');
+          gameObjects.sprite.anims.play('misa-spin', true);
+          break;
+        case 'danceMoveThree':
+          // console.log('dance 3');
+          gameObjects.sprite.anims.play('misa-left-walk', true);
+          break;
+        case 'danceMoveFour':
+          // console.log('dance 4');
+          gameObjects.sprite.anims.play('misa-front-walk', true);
+          break;
         case 'left':
           body.setVelocityX(-MOVEMENT_SPEED);
           gameObjects.sprite.anims.play('misa-left-walk', true);
@@ -250,55 +297,60 @@ export default class TownGameScene extends Phaser.Scene {
         default:
           // Not moving
           gameObjects.sprite.anims.stop();
+          gameObjects.sprite.setTexture('atlas', 'misa-front.png');
           // If we were moving, pick and idle frame to use
           if (prevVelocity.x < 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-left');
+            gameObjects.sprite.setTexture('atlas', 'misa-left.png');
           } else if (prevVelocity.x > 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-right');
+            gameObjects.sprite.setTexture('atlas', 'misa-right.png');
           } else if (prevVelocity.y < 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-back');
-          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front');
+            gameObjects.sprite.setTexture('atlas', 'misa-back.png');
+          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front.png');
+          console.log('HERE');
           break;
       }
 
-      const gameMove = this.getNewDanceMove();
-      // console.log('HERE');
-      // console.log(gameMove);
-      switch (gameMove) {
-        case 'danceMoveOne':
-          console.log('dance 1')
-          gameObjects.sprite.setTexture('atlas', 'misa-one-dance');
-          break;
-        case 'danceMoveTwo':
-          console.log('dance 2');
-          gameObjects.sprite.setTexture('atlas', 'misa-back');
-          break;
-        case 'danceMoveThree':
-          console.log('dance 3');
-          gameObjects.sprite.setTexture('atlas', 'misa-left');
-          break;
-        case 'danceMoveFour':
-          console.log('dance 4');
-          gameObjects.sprite.setTexture('atlas', 'misa-front');
-          break;
-        default:
-          // Not moving
-          gameObjects.sprite.anims.stop();
-          // If we were moving, pick and idle frame to use
-          if (prevVelocity.x < 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-left');
-          } else if (prevVelocity.x > 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-right');
-          } else if (prevVelocity.y < 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-back');
-          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front');
-          break;
-      }
+      // const primaryDirection = this.getNewMovementDirection();
+      // // console.log(primaryDirection);
+      // switch (primaryDirection) {
+      //   case 'left':
+      //     // body.setVelocityX(-MOVEMENT_SPEED);
+      //     gameObjects.sprite.anims.play('misa-left-walk', true);
+      //     break;
+      //   case 'right':
+      //     body.setVelocityX(MOVEMENT_SPEED);
+      //     gameObjects.sprite.anims.play('misa-right-walk', true);
+      //     break;
+      //   case 'front':
+      //     body.setVelocityY(MOVEMENT_SPEED);
+      //     gameObjects.sprite.anims.play('misa-front-walk', true);
+      //     break;
+      //   case 'back':
+      //     body.setVelocityY(-MOVEMENT_SPEED);
+      //     gameObjects.sprite.anims.play('misa-back-walk', true);
+      //     break;
+      //   default:
+      //     // Not moving
+      //     gameObjects.sprite.anims.stop();
+      //     // If we were moving, pick and idle frame to use
+      //     if (prevVelocity.x < 0) {
+      //       gameObjects.sprite.setTexture('atlas', 'misa-left');
+      //     } else if (prevVelocity.x > 0) {
+      //       gameObjects.sprite.setTexture('atlas', 'misa-right');
+      //     } else if (prevVelocity.y < 0) {
+      //       gameObjects.sprite.setTexture('atlas', 'misa-back');
+      //     } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front');
+      //     break;
+      // }
 
       // Normalize and scale the velocity so that player can't move faster along a diagonal
       gameObjects.sprite.body.velocity.normalize().scale(MOVEMENT_SPEED);
-
-      const isMoving = primaryDirection !== undefined;
+      
+      // let primaryDirection = undefined;
+      // if (gameMove === 'left' || gameMove === 'right' || gameMove === 'front' || gameMove === 'back') {
+      //   primaryDirection = gameMove as Direction;
+      // }
+        const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
       gameObjects.label.setY(body.y - 20);
       const x = gameObjects.sprite.getBounds().centerX;
@@ -421,10 +473,10 @@ export default class TownGameScene extends Phaser.Scene {
 
     // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
     // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-    const spawnPoint = this.map.findObject(
+    const spawnPoint = (this.map.findObject(
       'Objects',
       obj => obj.name === 'Spawn Point',
-    ) as unknown as Phaser.GameObjects.Components.Transform;
+    ) as unknown) as Phaser.GameObjects.Components.Transform;
 
     const labels = this.map.filterObjects('Objects', obj => obj.name === 'label');
     labels?.forEach(label => {
@@ -473,7 +525,7 @@ export default class TownGameScene extends Phaser.Scene {
     // has a bit of whitespace, so I'm using setSize & setOffset to control the size of the
     // player's body.
     const sprite = this.physics.add
-      .sprite(spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front')
+      .sprite(spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front.png')
       .setSize(30, 40)
       .setOffset(0, 24)
       .setDepth(6);
@@ -509,6 +561,7 @@ export default class TownGameScene extends Phaser.Scene {
       key: 'misa-left-walk',
       frames: anims.generateFrameNames('atlas', {
         prefix: 'misa-left-walk.',
+        suffix: '.png',
         start: 0,
         end: 3,
         zeroPad: 3,
@@ -520,6 +573,7 @@ export default class TownGameScene extends Phaser.Scene {
       key: 'misa-right-walk',
       frames: anims.generateFrameNames('atlas', {
         prefix: 'misa-right-walk.',
+        suffix: '.png',
         start: 0,
         end: 3,
         zeroPad: 3,
@@ -531,6 +585,7 @@ export default class TownGameScene extends Phaser.Scene {
       key: 'misa-front-walk',
       frames: anims.generateFrameNames('atlas', {
         prefix: 'misa-front-walk.',
+        suffix: '.png',
         start: 0,
         end: 3,
         zeroPad: 3,
@@ -542,6 +597,7 @@ export default class TownGameScene extends Phaser.Scene {
       key: 'misa-back-walk',
       frames: anims.generateFrameNames('atlas', {
         prefix: 'misa-back-walk.',
+        suffix: '.png',
         start: 0,
         end: 3,
         zeroPad: 3,
@@ -549,17 +605,30 @@ export default class TownGameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
-    // anims.create({
-    //   key: 'misa-one-dance',
-    //   frames: anims.generateFrameNames('atlas', {
-    //     prefix: 'misa-one-dance.',
-    //     start: 0,
-    //     end: 3,
-    //     zeroPad: 3,
-    //   }),
-    //   frameRate: 10,
-    //   repeat: -1,
-    // });
+    anims.create({
+      key: 'misa-spin',
+      frames: anims.generateFrameNames('atlas', {
+        prefix: 'misa-spin.',
+        suffix: '.png',
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    anims.create({
+      key: 'misa-one-dance',
+      frames: anims.generateFrameNames('atlas', {
+        prefix: 'misa-one-dance.',
+        suffix: '.png',
+        start: 0,
+        end: 1,
+        zeroPad: 3,
+      }),
+      frameRate: 2,
+      repeat: -1,
+    });
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
@@ -590,7 +659,7 @@ export default class TownGameScene extends Phaser.Scene {
   createPlayerSprites(player: PlayerController) {
     if (!player.gameObjects) {
       const sprite = this.physics.add
-        .sprite(player.location.x, player.location.y, 'atlas', 'misa-front')
+        .sprite(player.location.x, player.location.y, 'atlas', 'misa-front.png')
         .setSize(30, 40)
         .setOffset(0, 24);
       const label = this.add.text(
