@@ -256,26 +256,30 @@ export default class TownGameScene extends Phaser.Scene {
       // Stop any previous movement from the last frame
       body.setVelocity(0);
 
+      if (gameObjects.sprite.body.isDancing === undefined) {
+        gameObjects.sprite.body.isDancing = false;
+      }
+      const wasDancing = gameObjects.sprite.body.isDancing;
+      console.log(wasDancing);
+      gameObjects.sprite.body.isDancing = false;
       const primaryDirection = this.getNewMovementDirection();
       const gameMove = this.getNewMove();
-      // console.log('HERE');
-      console.log(gameMove);
       switch (gameMove) {
         case 'danceMoveOne':
-          // console.log('dance 1')
+          gameObjects.sprite.body.isDancing = true;
           gameObjects.sprite.anims.play('misa-one-dance', true);
           // gameObjects.sprite.anims.play('misa-back-walk', true);
           break;
         case 'danceMoveTwo':
-          // console.log('dance 2');
+          gameObjects.sprite.body.isDancing = true;
           gameObjects.sprite.anims.play('misa-spin', true);
           break;
         case 'danceMoveThree':
-          // console.log('dance 3');
+          gameObjects.sprite.body.isDancing = true;
           gameObjects.sprite.anims.play('misa-left-walk', true);
           break;
         case 'danceMoveFour':
-          // console.log('dance 4');
+          gameObjects.sprite.body.isDancing = true;
           gameObjects.sprite.anims.play('misa-front-walk', true);
           break;
         case 'left':
@@ -297,19 +301,27 @@ export default class TownGameScene extends Phaser.Scene {
         default:
           // Not moving
           gameObjects.sprite.anims.stop();
-          gameObjects.sprite.setTexture('atlas', 'misa-front.png');
           // If we were moving, pick and idle frame to use
           if (prevVelocity.x < 0) {
+            // console.log('left');
             gameObjects.sprite.setTexture('atlas', 'misa-left.png');
           } else if (prevVelocity.x > 0) {
+            // console.log('right');
             gameObjects.sprite.setTexture('atlas', 'misa-right.png');
           } else if (prevVelocity.y < 0) {
+            // console.log('back');
             gameObjects.sprite.setTexture('atlas', 'misa-back.png');
-          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front.png');
-          console.log('HERE');
+          } else if (prevVelocity.y > 0) {
+            // console.log('front');
+            gameObjects.sprite.setTexture('atlas', 'misa-front.png');
+          } else if (wasDancing) {
+            gameObjects.sprite.setTexture('atlas', 'misa-front.png');
+          };
           break;
       }
 
+      // if (gameObjects.sprite.texture.key === 'misa')
+      console.log(gameObjects.sprite.texture.firstFrame);
       // const primaryDirection = this.getNewMovementDirection();
       // // console.log(primaryDirection);
       // switch (primaryDirection) {
