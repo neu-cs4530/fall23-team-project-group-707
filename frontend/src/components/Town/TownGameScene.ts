@@ -203,22 +203,6 @@ export default class TownGameScene extends Phaser.Scene {
     return undefined;
   }
 
-  // getNewDanceMove() {
-  //   if (this._cursors.find(keySet => keySet.one?.isDown)) {
-  //     return 'danceMoveOne';
-  //   }
-  //   if (this._cursors.find(keySet => keySet.two?.isDown)) {
-  //     return 'danceMoveTwo';
-  //   }
-  //   if (this._cursors.find(keySet => keySet.three?.isDown)) {
-  //     return 'danceMoveThree';
-  //   }
-  //   if (this._cursors.find(keySet => keySet.four?.isDown)) {
-  //     return 'danceMoveFour';
-  //   }
-  //   return undefined;
-  // }
-
   moveOurPlayerTo(destination: Partial<PlayerLocation>) {
     const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
     if (!gameObjects) {
@@ -320,48 +304,9 @@ export default class TownGameScene extends Phaser.Scene {
           break;
       }
 
-      // if (gameObjects.sprite.texture.key === 'misa')
-      console.log(gameObjects.sprite.texture.firstFrame);
-      // const primaryDirection = this.getNewMovementDirection();
-      // // console.log(primaryDirection);
-      // switch (primaryDirection) {
-      //   case 'left':
-      //     // body.setVelocityX(-MOVEMENT_SPEED);
-      //     gameObjects.sprite.anims.play('misa-left-walk', true);
-      //     break;
-      //   case 'right':
-      //     body.setVelocityX(MOVEMENT_SPEED);
-      //     gameObjects.sprite.anims.play('misa-right-walk', true);
-      //     break;
-      //   case 'front':
-      //     body.setVelocityY(MOVEMENT_SPEED);
-      //     gameObjects.sprite.anims.play('misa-front-walk', true);
-      //     break;
-      //   case 'back':
-      //     body.setVelocityY(-MOVEMENT_SPEED);
-      //     gameObjects.sprite.anims.play('misa-back-walk', true);
-      //     break;
-      //   default:
-      //     // Not moving
-      //     gameObjects.sprite.anims.stop();
-      //     // If we were moving, pick and idle frame to use
-      //     if (prevVelocity.x < 0) {
-      //       gameObjects.sprite.setTexture('atlas', 'misa-left');
-      //     } else if (prevVelocity.x > 0) {
-      //       gameObjects.sprite.setTexture('atlas', 'misa-right');
-      //     } else if (prevVelocity.y < 0) {
-      //       gameObjects.sprite.setTexture('atlas', 'misa-back');
-      //     } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front');
-      //     break;
-      // }
-
       // Normalize and scale the velocity so that player can't move faster along a diagonal
       gameObjects.sprite.body.velocity.normalize().scale(MOVEMENT_SPEED);
       
-      // let primaryDirection = undefined;
-      // if (gameMove === 'left' || gameMove === 'right' || gameMove === 'front' || gameMove === 'back') {
-      //   primaryDirection = gameMove as Direction;
-      // }
         const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
       gameObjects.label.setY(body.y - 20);
