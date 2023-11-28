@@ -37,15 +37,25 @@ type ResultCardProps = {
 };
 
 function ResultCard({ song, onClickHandler }: ResultCardProps): JSX.Element {
-  const songInfoStyle: React.CSSProperties = {
-    flex: `1 1 0`,
-    flexDirection: 'column',
-    overflowY: 'scroll',
-  };
   const resultCardStyle: React.CSSProperties = {
-    flex: `1 1 0`,
+    flex: `1`,
+
+    display: 'flex',
+    flexDirection: 'row',
+
+    height: '100px',
+  };
+  const imageStyles: React.CSSProperties = {
+    flex: `1`,
+
+    overflowY: 'clip',
+  };
+  const songInfoStyle: React.CSSProperties = {
+    flex: `1`,
+
+    display: 'flex',
     flexDirection: 'column',
-    overflowY: 'scroll',
+    overflowY: 'clip',
   };
 
   return (
@@ -56,7 +66,7 @@ function ResultCard({ song, onClickHandler }: ResultCardProps): JSX.Element {
       }}
       style={resultCardStyle}>
       <Image
-        flex={`1 1 0`}
+        style={imageStyles}
         className='thumbnail'
         src={`https://img.youtube.com/vi/${song.videoId}/hqdefault.jpg`}
         alt=''
@@ -70,16 +80,19 @@ function ResultCard({ song, onClickHandler }: ResultCardProps): JSX.Element {
 }
 
 function ResultsContainer({ songs, onClickHandler }: ResultsContainerProps): JSX.Element {
-  const resultsContainerStyler: React.CSSProperties = {
-    flex: 1,
+  const resultsContainerStyles: React.CSSProperties = {
+    flex: '4 1 4',
 
     display: 'flex',
     flexDirection: 'column',
     minWidth: '100%',
+    maxHeight: '100%',
+
+    overflowY: 'scroll',
   };
 
   return (
-    <div style={resultsContainerStyler}>
+    <div style={resultsContainerStyles}>
       {songs.map(song => {
         return <ResultCard key={song.videoId} song={song} onClickHandler={onClickHandler} />;
       })}
@@ -141,36 +154,62 @@ export function SuggestionForm({ handleClose }: SuggestionFormProps): JSX.Elemen
   };
 
   const containerStyles: React.CSSProperties = {
-    flex: 1,
     display: 'flex',
     flexDirection: 'column',
+
+    padding: '0',
+  };
+  const resultsContainerStyles: React.CSSProperties = {
+    flex: '4 1 4',
+
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: '100%',
+    maxHeight: '100%',
+
+    overflowY: 'scroll',
+  };
+  const searchBarStyles: React.CSSProperties = {
+    flex: '1',
+
+    display: 'flex',
+    flexDirection: 'row',
+  };
+  const queueButtonStyles: React.CSSProperties = {
+    flex: '1',
   };
 
   return (
     <Container aria-label='suggestionFormContainer' style={containerStyles}>
-      <Input
-        aria-label='songName'
-        placeholder='Song Name'
-        onChange={event => {
-          setSongName(event.target.value);
-        }}
-        onKeyDown={event => {
-          // The character model will move around if we don't stop the key event propagation.
-          event.stopPropagation();
-        }}
-      />
-      <ResultsContainer songs={results} onClickHandler={resultsClickHandler} />
-      <Flex>
+      <div style={searchBarStyles}>
+        <Input
+          aria-label='songName'
+          placeholder='Song & Artist'
+          onChange={event => {
+            setSongName(event.target.value);
+          }}
+          onKeyDown={event => {
+            // The character model will move around if we don't stop the key event propagation.
+            event.stopPropagation();
+          }}
+        />
         <Button aria-label='search' onClick={searchEventHandler}>
           Search
         </Button>
-        <Button aria-label='queue' onClick={queueEventHandler}>
-          Add to Queue
-        </Button>
-        <Button aria-label='close' onClick={handleClose}>
-          X
-        </Button>
-      </Flex>
+      </div>
+      <div style={resultsContainerStyles}>
+        {results.map(result => {
+          return (
+            <ResultCard key={result.videoId} song={result} onClickHandler={resultsClickHandler} />
+          );
+        })}
+      </div>
+      <Button style={queueButtonStyles} onClick={queueEventHandler}>
+        Add to Queue
+      </Button>
+      {/* <Button aria-label='close' onClick={handleClose}>
+        X
+      </Button> */}
     </Container>
   );
 }
@@ -185,10 +224,12 @@ export default function SuggestionFormWrapper({
       <ModalOverlay style={{ backgroundColor: 'rgba(0, 0, 0, 0.93)' }} />
       <ModalContent
         style={{
+          padding: '20px',
           height: `calc(max(80vh, 700px))`,
           maxWidth: `calc(max(30vw, 550px))`,
           display: 'flex',
           flexDirection: 'column',
+          maxHeight: '100%',
         }}>
         <SuggestionForm handleClose={handleClose} />
       </ModalContent>
