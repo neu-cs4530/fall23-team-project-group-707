@@ -91,7 +91,7 @@ function ResultsContainer({ songs, onClickHandler }: ResultsContainerProps): JSX
 export function SuggestionForm({ handleClose }: SuggestionFormProps): JSX.Element {
   const townController = useTownController();
   const [songName, setSongName] = React.useState('');
-  const [artistName, setArtistName] = React.useState('');
+  const [artistName] = React.useState('');
   const [results, setResults] = React.useState<Song[]>([]);
   const [song, setSong] = useState<Song>();
   const toast = useToast();
@@ -159,16 +159,6 @@ export function SuggestionForm({ handleClose }: SuggestionFormProps): JSX.Elemen
           event.stopPropagation();
         }}
       />
-      {/* <Input
-        aria-label='artistName'
-        placeholder='Artist Name'
-        onChange={event => {
-          setArtistName(event.target.value);
-        }}
-        onKeyDown={event => {
-          event.stopPropagation();
-        }}
-      /> */}
       <ResultsContainer songs={results} onClickHandler={resultsClickHandler} />
       <Flex>
         <Button aria-label='search' onClick={searchEventHandler}>
