@@ -23,6 +23,10 @@ type SuggestionFormWrapperProps = {
   handleClose: () => void;
 };
 
+type SuggestionFormProps = {
+  handleClose: () => void;
+};
+
 type ResultsContainerProps = {
   songs: Song[];
   onClickHandler: (song: Song) => void;
@@ -33,41 +37,58 @@ type ResultCardProps = {
 };
 
 function ResultCard({ song, onClickHandler }: ResultCardProps): JSX.Element {
+  const songInfoStyle: React.CSSProperties = {
+    flex: `1 1 0`,
+    flexDirection: 'column',
+    overflowY: 'scroll',
+  };
+  const resultCardStyle: React.CSSProperties = {
+    flex: `1 1 0`,
+    flexDirection: 'column',
+    overflowY: 'scroll',
+  };
+
   return (
-    <Flex
+    <div
+      className='resultCard'
       onClick={() => {
         onClickHandler(song);
-      }}>
+      }}
+      style={resultCardStyle}>
       <Image
         flex={`1 1 0`}
         className='thumbnail'
         src={`https://img.youtube.com/vi/${song.videoId}/hqdefault.jpg`}
         alt=''
       />
-      <Flex className='songInfo' flex={`1 1 0`} dir='vertical'>
+      <div className='songInfo' style={songInfoStyle}>
         <p className='name'>{song.songName}</p>
         <p className='artist'>{song.artistName}</p>
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 }
 
 function ResultsContainer({ songs, onClickHandler }: ResultsContainerProps): JSX.Element {
-  if (songs.length === 0) {
-    return <></>;
-  }
+  const resultsContainerStyler: React.CSSProperties = {
+    flex: 1,
+
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: '100%',
+  };
 
   return (
-    <Stack>
+    <div style={resultsContainerStyler}>
       {songs.map(song => {
         return <ResultCard key={song.videoId} song={song} onClickHandler={onClickHandler} />;
       })}
-    </Stack>
+    </div>
   );
 }
 
 /* This is the modal content and what the user sees and interacts with. */
-export function SuggestionForm(): JSX.Element {
+export function SuggestionForm({ handleClose }: SuggestionFormProps): JSX.Element {
   const townController = useTownController();
   const [songName, setSongName] = React.useState('');
   const [artistName, setArtistName] = React.useState('');
@@ -119,8 +140,14 @@ export function SuggestionForm(): JSX.Element {
     }
   };
 
+  const containerStyles: React.CSSProperties = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  };
+
   return (
-    <Container backgroundColor={'blue'}>
+    <Container aria-label='suggestionFormContainer' style={containerStyles}>
       <Input
         aria-label='songName'
         placeholder='Song Name'
@@ -132,7 +159,7 @@ export function SuggestionForm(): JSX.Element {
           event.stopPropagation();
         }}
       />
-      <Input
+      {/* <Input
         aria-label='artistName'
         placeholder='Artist Name'
         onChange={event => {
@@ -141,7 +168,7 @@ export function SuggestionForm(): JSX.Element {
         onKeyDown={event => {
           event.stopPropagation();
         }}
-      />
+      /> */}
       <ResultsContainer songs={results} onClickHandler={resultsClickHandler} />
       <Flex>
         <Button aria-label='search' onClick={searchEventHandler}>
@@ -149,6 +176,9 @@ export function SuggestionForm(): JSX.Element {
         </Button>
         <Button aria-label='queue' onClick={queueEventHandler}>
           Add to Queue
+        </Button>
+        <Button aria-label='close' onClick={handleClose}>
+          X
         </Button>
       </Flex>
     </Container>
@@ -162,11 +192,15 @@ export default function SuggestionFormWrapper({
 }: SuggestionFormWrapperProps): JSX.Element {
   return (
     <Modal isOpen={isOpen} onClose={handleClose} closeOnOverlayClick={false}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{'Suggest a song!'}</ModalHeader>
-        <ModalCloseButton />
-        <SuggestionForm />
+      <ModalOverlay style={{ backgroundColor: 'rgba(0, 0, 0, 0.93)' }} />
+      <ModalContent
+        style={{
+          height: `calc(max(80vh, 700px))`,
+          maxWidth: `calc(max(30vw, 550px))`,
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+        <SuggestionForm handleClose={handleClose} />
       </ModalContent>
     </Modal>
   );
